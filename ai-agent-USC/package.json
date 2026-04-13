@@ -12,6 +12,17 @@
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
+    "customEditors": [
+      {
+        "viewType": "ai-agent-USC.USC",
+        "displayName": "User Story Edit",
+        "selector": [
+          {
+            "filenamePattern": "*.usc.json"
+          }
+        ]
+      }
+    ],
     "commands": [
       {
         "command": "ai-agent-USC.helloWorld",

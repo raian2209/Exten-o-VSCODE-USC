@@ -1,0 +1,82 @@
+* {
+    font-family: var(--vscode-font-family);
+    font-size: var(--vscode-font-size);
+}
+
+body {
+    background-color: var(--vscode-editor-background);
+    color: var(--vscode-editor-foreground);
+}
+
+section {
+    margin-top: 1rem;
+}
+
+input {
+    background-color: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1px solid var(--vscode-input-border);
+}
+
+input::placeholder {
+    border-color: var(--vscode-placeholderForeground);
+}
+
+textarea {
+    background-color: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1px solid var(--vscode-input-border);
+    min-width: 100%;
+}
+
+textarea::placeholder {
+    border-color: var(--vscode-placeholderForeground);
+}
+
+button {
+    background-color: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+    border: 1px solid var(--vscode-border);
+}
+
+button:hover {
+    background-color: var(--vscode-button-hoverBackground);
+}
+
+.title {
+    font-size: 2rem;
+}
+
+.subtitle {
+    font-size: 1.5rem;
+}
+
+.story-statement-form-group {
+    display: grid;
+    grid-template-columns: 1fr 9fr;
+    grid-template-rows: repeat(3,auto);
+    gap: 1rem;
+}
+
+.story-statement-form-group label {
+    font-size: 1rem;
+}
+
+.criteria-div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.criteria-ol li textarea {
+    vertical-align: top;
+}
+
+.criteria-ul li input {
+    width: 100%;
+}
+
+.criteria-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
