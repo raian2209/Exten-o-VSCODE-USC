@@ -1,88 +1,102 @@
 import * as vscode from "vscode";
+import {
+  parseBoardDocument,
+  stringifyBoardDocument,
+} from "./core/userStoryService";
+import {
+  WebviewInboundMessage,
+  WebviewStateMessage,
+} from "./core/types";
+import { getWebviewHtml } from "./webview/htmlTemplate";
+
+function getNonce(): string {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let value = "";
+
+  for (let i = 0; i < 32; i += 1) {
+    value += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+
+  return value;
+}
 
 export class USCTextEditorProvider implements vscode.CustomTextEditorProvider {
-  constructor(readonly context: vscode.ExtensionContext) {}
+  constructor(private readonly context: vscode.ExtensionContext) {}
 
   async resolveCustomTextEditor(
     document: vscode.TextDocument,
     webviewPanel: vscode.WebviewPanel,
-    token: vscode.CancellationToken,
+    _token: vscode.CancellationToken,
   ): Promise<void> {
     webviewPanel.webview.options = {
+      enableScripts: true,
       localResourceRoots: [
         vscode.Uri.joinPath(this.context.extensionUri, "media"),
       ],
     };
 
-    webviewPanel.webview.html = this.getHtml(webviewPanel.webview);
-  }
+    const nonce = getNonce();
+    webviewPanel.webview.html = getWebviewHtml({
+      extensionUri: this.context.extensionUri,
+      webview: webviewPanel.webview,
+      nonce,
+    });
 
-  private getHtml(webview: vscode.Webview): string {
-    const css = webview.asWebviewUri(
-      vscode.Uri.joinPath(this.context.extensionUri, "media", "usc.css"),
-    );
+    let applyingEditFromWebview = false;
 
-    return `
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-        <meta charset="UTF-8">
+    const sendStateToWebview = () => {
+      const state = parseBoardDocument(document.getText());
+      const message: WebviewStateMessage = {
+        type: "setState",
+        payload: state,
+      };
 
-        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource};">
+      void webviewPanel.webview.postMessage(message);
+    };
 
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    sendStateToWebview();
 
-        <link rel="stylesheet" href="${css}"> 
+    const changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument((event) => {
+      if (event.document.uri.toString() !== document.uri.toString()) {
+        return;
+      }
 
-        <title>User Story</title>
-      </head>
-      <body>
-        <div>
-          <h1 class="title">Teste</h1>
-          <section class="story-statement-section">
-            <h2 class="subtitle">🗩  story statement</h2>
-            <div class="story-statement-form-group">
-              <label>As a</label>
-              <input></input>
-              <label>I want to</label>
-              <input></input>
-              <label>So that</label>
-              <input></input>
-            </div>
-          </section>
+      if (applyingEditFromWebview) {
+        return;
+      }
 
-          <section>
-            <div class="criteria-div">  
-              <h2 class="subtitle">🗹  acceptance criteria (gherkin format)</h2>
-              <div class="criteria-buttons">
-                <button>Generate AI Criteria</button>
-                <button>+Add Criteria</button>
-              </div>
-            </div>
-            <ol class="criteria-ol">
-                <li>
-                  <textarea></textarea>
-                </li>
-            </ol>
-          </section>
+      sendStateToWebview();
+    });
 
-          <section>
-            <div class="criteria-div">  
-              <h2 class="subtitle"><> technical criteria</h2>
-              <div class="criteria-buttons">
-                <button>Generate AI Criteria</button>
-                <button>+Add Criteria</button>
-              </div>
-            </div>
-            <ul class="criteria-ul">
-                <li>
-                  <input></input>
-                </li>
-            </ul>
-          </section>
-        </div>
-      </body>
-      </html>
-    `;
+    webviewPanel.onDidDispose(() => {
+      changeDocumentSubscription.dispose();
+    });
+
+    webviewPanel.webview.onDidReceiveMessage(async (message: WebviewInboundMessage) => {
+      if (message.type !== "saveDocument") {
+        return;
+      }
+
+      const newDocumentText = stringifyBoardDocument(message.payload);
+      const fullDocumentRange = new vscode.Range(
+        document.positionAt(0),
+        document.positionAt(document.getText().length),
+      );
+
+      applyingEditFromWebview = true;
+
+      try {
+        const edit = new vscode.WorkspaceEdit();
+        edit.replace(document.uri, fullDocumentRange, newDocumentText);
+
+        const succeeded = await vscode.workspace.applyEdit(edit);
+
+        if (!succeeded) {
+          vscode.window.showErrorMessage("Unable to persist User Story changes.");
+        }
+      } finally {
+        applyingEditFromWebview = false;
+      }
+    });
   }
 }

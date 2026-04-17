@@ -9,7 +9,10 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onCustomEditor:ai-agent-USC.USC",
+    "onCommand:ai-agent-USC.openUserStoryBoard"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
     "customEditors": [
@@ -25,10 +28,17 @@
     ],
     "commands": [
       {
-        "command": "ai-agent-USC.helloWorld",
-        "title": "Hello World"
+        "command": "ai-agent-USC.openUserStoryBoard",
+        "title": "USC: Open User Story Board"
       }
-    ]
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "ai-agent-USC.openUserStoryBoard"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",

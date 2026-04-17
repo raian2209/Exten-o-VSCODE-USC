@@ -1,82 +1,230 @@
 * {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background: var(--vscode-editor-background);
+    color: var(--vscode-editor-foreground);
     font-family: var(--vscode-font-family);
     font-size: var(--vscode-font-size);
 }
 
 body {
-    background-color: var(--vscode-editor-background);
-    color: var(--vscode-editor-foreground);
+    padding: 16px;
 }
 
-section {
-    margin-top: 1rem;
-}
-
-input {
-    background-color: var(--vscode-input-background);
-    color: var(--vscode-input-foreground);
-    border: 1px solid var(--vscode-input-border);
-}
-
-input::placeholder {
-    border-color: var(--vscode-placeholderForeground);
-}
-
-textarea {
-    background-color: var(--vscode-input-background);
-    color: var(--vscode-input-foreground);
-    border: 1px solid var(--vscode-input-border);
-    min-width: 100%;
-}
-
-textarea::placeholder {
-    border-color: var(--vscode-placeholderForeground);
-}
-
-button {
-    background-color: var(--vscode-button-background);
-    color: var(--vscode-button-foreground);
-    border: 1px solid var(--vscode-border);
-}
-
-button:hover {
-    background-color: var(--vscode-button-hoverBackground);
-}
-
-.title {
-    font-size: 2rem;
-}
-
-.subtitle {
-    font-size: 1.5rem;
-}
-
-.story-statement-form-group {
+.layout {
     display: grid;
-    grid-template-columns: 1fr 9fr;
-    grid-template-rows: repeat(3,auto);
-    gap: 1rem;
+    grid-template-columns: minmax(520px, 1fr) minmax(220px, 18vw);
+    gap: 16px;
+    width: 100%;
+    min-height: calc(100vh - 32px);
 }
 
-.story-statement-form-group label {
-    font-size: 1rem;
+.right-panel,
+.card,
+.main-header {
+    background-color: var(--vscode-sideBar-background);
+    border: 1px solid var(--vscode-sideBar-border, var(--vscode-panel-border));
+    border-radius: 2px;
 }
 
-.criteria-div {
+.right-panel {
+    padding: 14px;
+}
+
+.panel-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--vscode-sideBarSectionHeader-foreground, var(--vscode-descriptionForeground));
+    margin-bottom: 12px;
+}
+
+.main-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.main-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 14px 16px;
 }
 
-.criteria-ol li textarea {
-    vertical-align: top;
+.main-header h1 {
+    margin: 0;
+    color: var(--vscode-editor-foreground);
+    font-size: 20px;
+    font-weight: 600;
 }
 
-.criteria-ul li input {
-    width: 100%;
+.mode-switch {
+    display: inline-flex;
+    border: 1px solid var(--vscode-button-border, var(--vscode-contrastBorder));
+    border-radius: 2px;
+    overflow: hidden;
 }
 
-.criteria-buttons {
+.mode-button {
+    background: var(--vscode-button-secondaryBackground);
+    color: var(--vscode-button-secondaryForeground);
+    border: 0;
+    padding: 8px 14px;
+    font-weight: 600;
+}
+
+.mode-button.is-active {
+    background: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+}
+
+.card {
+    padding: 14px;
+}
+
+.card h2 {
+    margin: 0;
+    font-size: 13px;
+    color: var(--vscode-editor-foreground);
+}
+
+.section-header {
     display: flex;
-    gap: 0.5rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.statement-grid {
+    margin-top: 14px;
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 10px 14px;
+    align-items: start;
+}
+
+label {
+    color: var(--vscode-input-foreground);
+    font-weight: 600;
+}
+
+input,
+textarea,
+select {
+    width: 100%;
+    border: 1px solid var(--vscode-input-border, transparent);
+    border-radius: 2px;
+    padding: 10px 12px;
+    background-color: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    font-family: var(--vscode-font-family);
+    font-size: var(--vscode-font-size);
+    outline: none;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: var(--vscode-input-placeholderForeground);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 70px;
+    line-height: 1.45;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--vscode-focusBorder);
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: -1px;
+}
+
+.criteria-list {
+    margin: 12px 0 0;
+    padding-left: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.criteria-list.ordered {
+    list-style: decimal;
+}
+
+.criteria-list:not(.ordered) {
+    list-style: circle;
+}
+
+.criterion-item textarea {
+    min-height: 108px;
+}
+
+.criteria-list:not(.ordered) .criterion-item textarea {
+    min-height: 56px;
+}
+
+.ghost-button {
+    border: 1px solid var(--vscode-button-border, transparent);
+    background-color: var(--vscode-button-secondaryBackground);
+    color: var(--vscode-button-secondaryForeground);
+    border-radius: 2px;
+    padding: 8px 12px;
+    font-family: var(--vscode-font-family);
+    font-size: var(--vscode-font-size);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.ghost-button:hover {
+    background-color: var(--vscode-button-secondaryHoverBackground);
+}
+
+.field {
+    margin-bottom: 12px;
+}
+
+.field label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--vscode-descriptionForeground);
+}
+
+#itemType {
+    background-color: var(--vscode-input-background);
+    color: var(--vscode-disabledForeground);
+}
+
+@media (max-width: 1200px) {
+    .layout {
+        grid-template-columns: 1fr;
+        min-height: auto;
+    }
+
+    .main-panel {
+        order: 1;
+    }
+
+    .right-panel {
+        order: 2;
+    }
+
+    .main-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .statement-grid {
+        grid-template-columns: 1fr;
+    }
 }

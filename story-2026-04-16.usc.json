@@ -1,0 +1,27 @@
+{
+  "selectedStoryId": "story-1",
+  "stories": [
+    {
+      "id": "story-1",
+      "title": "User Login Authentication",
+      "statement": {
+        "asA": "registered userdafdasfasfdasdfasdf",
+        "iWantTo": "log in using my email and password ",
+        "soThat": "I can access my personal dashboard and saved settings safely"
+      },
+      "acceptanceCriteria": [
+        "Given the user is on the login page\nWhen they enter valid credentials\nThen they are redirected to the dashboard",
+        "Given the user enters an invalid password\nWhen they submit the form\nThen an error message is displayed",
+        "Given ...\nWhen ...\nThen ..."
+      ],
+      "technicalCriteria": [
+        "Implement rate limiting on the login endpoint (max 5 attempts per minute)",
+        "New technical criterion"
+      ],
+      "status": "In Progress",
+      "priority": "High",
+      "storyPoints": 5,
+      "devNotes": "Needs to integrate with the new Auth0 provider."
+    }
+  ]
+}
